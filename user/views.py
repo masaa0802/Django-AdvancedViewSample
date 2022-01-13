@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from AdvancedViewProject.user.forms import UserForm
-from AdvancedViewProject.user.models import Profile
+# from AdvancedViewProject.user.forms import UserForm
+# from AdvancedViewProject.user.models import Profile
 from user.forms import UserForm, ProfileForm
 
 # Create your views here.
