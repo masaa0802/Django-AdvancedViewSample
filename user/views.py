@@ -1,8 +1,8 @@
-from django.shortcuts import render
-# from AdvancedViewProject.user.forms import UserForm
-# from AdvancedViewProject.user.models import Profile
-from user.forms import UserForm, ProfileForm
-
+from django.shortcuts import render,redirect
+from django.http import HttpResponse
+from user.forms import UserForm, ProfileForm, LoginForm
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 def user_list(request):
   return render(request, 'user/user_list.html')
@@ -24,3 +24,30 @@ def register(request):
     'user_form': user_form,
     'profile_form':profile_form,
   })
+
+def user_login(request):
+  login_form = LoginForm(request.POST or None)
+  if login_form.is_valid():
+    username = login_form.cleaned_data.get('username')
+    password = login_form.cleaned_data.get('password')
+    user = authenticate(username=username, password=password)
+    if user:
+      if user.is_active:
+        login(request, user)
+        return redirect('user:index')
+      else:
+        return HttpResponse('アカウントがアクティブでないです')
+    else:
+      return HttpResponse('ユーザが存在しません')
+  return render(request, 'user/login.html', context={
+    'login_form': login_form
+  })
+
+@login_required
+def user_logout(request):
+  logout(request)
+  return redirect('user:index')
+
+@login_required
+def info(request):
+  return HttpResponse('ログインしています')
